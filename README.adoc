@@ -1,0 +1,20 @@
+### lowerkeys
+
+Go's `http.Header` does not comply with HTTP 2's lower-case header key names because its behavior cannot be updated due to Go 1.x's backwards compatibility promise. Since header key names are case-insensitive in HTTP 1.x, lower-case is now the de facto way to case header keys.
+
+This package makes this easy to achieve by providing `type Header http.Header` in package `lowerkeys` which has overrides for all relevant methods of `http.Header`:
+
+```go
+response, _ := http.Get("https://example.com")
+header := lowerkeys.Using(response.Header()) // Same underlying map, with lower-cased keys.
+header.Get("cOnTeNt-TyPe") // Has overrides which lower-cases the key parameter.
+```
+
+Everything else you need to know:
+
+```go
+import "github.com/Zyl9393/lowerkeys"
+
+lowerkeys.New() // Glorified make(lowerkeys.Header)
+lowerkeys.From(response.Header()) // Like Using(), but makes a clone of the map beforehand.
+```
